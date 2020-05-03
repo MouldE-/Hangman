@@ -1,63 +1,69 @@
 ' Title: Hangman
 ' Author: Timothy Revans
 ' Desccription: A console application to generate a game of hangman for the user to play against, used to experiment with GitHub.
+
 Module Program
+
     Sub Main(args As String())
 
-        Dim word As String
-        Dim guess As Char
-
+        ' used as an infinite loop to make the game replayable
         While True
 
-            Dim i As Integer = 0
-
-            word = getWord()
-
-            Dim fullGuess As Char() = word.ToCharArray
+            ' initial variable declarations
+            Dim incorrectGuessesMade As Integer = 0
+            Dim wordToGuess As String = getWord()
+            Dim letterGuessed As Char
             Dim incorrectGuesses(25) As Char
 
-            For j As Integer = 0 To fullGuess.Length - 1
+            ' set the full letterGuessed to a number of "-" equal to the length of the array
+            Dim fullGuess As Char() = wordToGuess.ToCharArray
 
-                fullGuess(j) = "-"
+            For i As Integer = 0 To fullGuess.Length - 1
+
+                fullGuess(i) = "-"
 
             Next
 
+            ' a loop to continue until the game as finished
             Do
 
+                ' a loop to continue until a valid letterGuessed has been made
                 Do
 
-                    printUI(fullGuess, incorrectGuesses, i)
+                    PrintUI(fullGuess, incorrectGuesses, incorrectGuessesMade)
+                    Console.Write("Please enter your letterGuessed: ")
+                    letterGuessed = Console.ReadLine().ToLower
 
-                    Console.Write("Please enter your guess: ")
-                    guess = Console.ReadLine().ToLower
+                Loop While ArrayContains(incorrectGuesses, letterGuessed) OrElse ArrayContains(fullGuess, letterGuessed)
 
-                Loop While arrayContains(incorrectGuesses, guess) OrElse arrayContains(fullGuess, guess)
+                ' check whether the wordToGuess contains the letterGuessed
+                Dim containsLetter As Boolean = False
 
-                Dim contain As Boolean = False
+                For i As Integer = 0 To wordToGuess.Length - 1
 
-                For j As Integer = 0 To word.Length - 1
+                    If wordToGuess(i) = letterGuessed Then
 
-                    If word(j) = guess Then
-
-                        contain = True
-                        fullGuess(j) = guess
+                        containsLetter = True
+                        fullGuess(i) = letterGuessed
 
                     End If
 
                 Next
 
-                If contain = False Then
+                ' store letterGuessed as incorrect if it is not contained in the wordToGuess
+                If containsLetter = False Then
 
-                    incorrectGuesses(i) = guess
-                    i += 1
+                    incorrectGuesses(incorrectGuessesMade) = letterGuessed
+                    incorrectGuessesMade += 1
 
                 End If
 
-            Loop Until fullGuess = word Or i = 10
+            Loop Until fullGuess = wordToGuess Or incorrectGuessesMade = 10
 
-            printUI(fullGuess, incorrectGuesses, i)
+            PrintUI(fullGuess, incorrectGuesses, incorrectGuessesMade)
 
-            If fullGuess = word Then
+            ' print out winning and losing
+            If fullGuess = wordToGuess Then
 
                 Console.WriteLine("Congratulations! You win!")
 
@@ -65,39 +71,24 @@ Module Program
 
                 Console.WriteLine("You Lose!")
                 Console.WriteLine("")
-                Console.WriteLine("The correct answer is " & word & ".")
-                Console.WriteLine("The correct answer is " & word & ".")
+                Console.WriteLine("The correct answer is " & wordToGuess & ".")
 
             End If
 
             Console.WriteLine("Press any button to continue...")
             Console.ReadKey()
-
             Console.Clear()
 
         End While
 
     End Sub
 
-    Sub printUI(ByVal fullGuess() As Char, ByVal incorrectGuesses() As Char, i As Integer)
+    ' a subroutine to print out the UI to make code neater and avoid repetition
+    Sub PrintUI(ByVal fullGuess() As Char, ByVal incorrectGuesses() As Char, incorrectGuessesMade As Integer)
 
         Console.Clear()
-        printMan(i)
-        Console.WriteLine()
-        Console.WriteLine()
-        Console.WriteLine()
-        Console.WriteLine(fullGuess)
-        Console.WriteLine()
-        Console.WriteLine("Letters Guessed:")
-        printArray(incorrectGuesses)
-        Console.WriteLine()
-        Console.WriteLine()
 
-    End Sub
-
-    Sub printMan(ByVal num)
-
-        Select Case num
+        Select Case incorrectGuessesMade
             Case 0
                 Console.WriteLine("")
                 Console.WriteLine("")
@@ -199,20 +190,27 @@ Module Program
                 Console.WriteLine("    _|___")
         End Select
 
-    End Sub
+        Console.WriteLine()
+        Console.WriteLine()
+        Console.WriteLine()
+        Console.WriteLine(fullGuess)
+        Console.WriteLine()
+        Console.WriteLine("Letters Guessed:")
 
-    Sub printArray(ByVal arr() As Char)
-
-        For Each letter In arr
+        For Each letter In incorrectGuesses
 
             Console.Write(letter)
             Console.Write(" ")
 
         Next
 
+        Console.WriteLine()
+        Console.WriteLine()
+
     End Sub
 
-    Function arrayContains(ByVal arr() As Char, ByVal check As Char) As Boolean
+    ' a function to check if the array passed to it contains a specified character
+    Function ArrayContains(ByVal arr() As Char, ByVal check As Char) As Boolean
 
         For Each item In arr
 
@@ -228,6 +226,7 @@ Module Program
 
     End Function
 
+    ' a function to return a randomized wordToGuess from a list of ~200
     Function getWord() As String
 
         Dim words() As String = {
