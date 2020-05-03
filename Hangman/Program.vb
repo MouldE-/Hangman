@@ -1,17 +1,17 @@
-' Title: Hangman
+' Title: Program.vb
 ' Author: Timothy Revans
 ' Desccription: A console application to generate a game of hangman for the user to play against, used to experiment with GitHub.
 
 Module Program
 
-    Sub Main(args As String())
+    Sub Main()
 
         ' used as an infinite loop to make the game replayable
         While True
 
             ' initial variable declarations
             Dim incorrectGuessesMade As Integer = 0
-            Dim wordToGuess As String = getWord()
+            Dim wordToGuess As String = GetWord()
             Dim letterGuessed As Char
             Dim incorrectGuesses(25) As Char
 
@@ -37,21 +37,19 @@ Module Program
                 Loop While ArrayContains(incorrectGuesses, letterGuessed) OrElse ArrayContains(fullGuess, letterGuessed)
 
                 ' check whether the wordToGuess contains the letterGuessed
-                Dim containsLetter As Boolean = False
+                If ArrayContains(wordToGuess, letterGuessed) Then
 
-                For i As Integer = 0 To wordToGuess.Length - 1
+                    For i As Integer = 0 To wordToGuess.Length - 1
 
-                    If wordToGuess(i) = letterGuessed Then
+                        If wordToGuess(i) = letterGuessed Then
 
-                        containsLetter = True
-                        fullGuess(i) = letterGuessed
+                            fullGuess(i) = letterGuessed
 
-                    End If
+                        End If
 
-                Next
+                    Next
 
-                ' store letterGuessed as incorrect if it is not contained in the wordToGuess
-                If containsLetter = False Then
+                Else
 
                     incorrectGuesses(incorrectGuessesMade) = letterGuessed
                     incorrectGuessesMade += 1
@@ -62,7 +60,7 @@ Module Program
 
             PrintUI(fullGuess, incorrectGuesses, incorrectGuessesMade)
 
-            ' print out winning and losing
+            ' print out winning and losing messages
             If fullGuess = wordToGuess Then
 
                 Console.WriteLine("Congratulations! You win!")
@@ -70,11 +68,12 @@ Module Program
             Else
 
                 Console.WriteLine("You Lose!")
-                Console.WriteLine("")
+                Console.WriteLine()
                 Console.WriteLine("The correct answer is " & wordToGuess & ".")
 
             End If
 
+            Console.WriteLine()
             Console.WriteLine("Press any button to continue...")
             Console.ReadKey()
             Console.Clear()
@@ -90,25 +89,25 @@ Module Program
 
         Select Case incorrectGuessesMade
             Case 0
-                Console.WriteLine("")
-                Console.WriteLine("")
-                Console.WriteLine("")
-                Console.WriteLine("")
-                Console.WriteLine("")
-                Console.WriteLine("")
-                Console.WriteLine("")
-                Console.WriteLine("")
+                Console.WriteLine()
+                Console.WriteLine()
+                Console.WriteLine()
+                Console.WriteLine()
+                Console.WriteLine()
+                Console.WriteLine()
+                Console.WriteLine()
+                Console.WriteLine()
             Case 1
-                Console.WriteLine("")
-                Console.WriteLine("")
-                Console.WriteLine("")
-                Console.WriteLine("")
-                Console.WriteLine("")
-                Console.WriteLine("")
-                Console.WriteLine("")
+                Console.WriteLine()
+                Console.WriteLine()
+                Console.WriteLine()
+                Console.WriteLine()
+                Console.WriteLine()
+                Console.WriteLine()
+                Console.WriteLine()
                 Console.WriteLine("    _|___")
             Case 2
-                Console.WriteLine("")
+                Console.WriteLine()
                 Console.WriteLine("     |")
                 Console.WriteLine("     |")
                 Console.WriteLine("     |")
@@ -227,7 +226,7 @@ Module Program
     End Function
 
     ' a function to return a randomized wordToGuess from a list of ~200
-    Function getWord() As String
+    Function GetWord() As String
 
         Dim words() As String = {
             "abruptly",
