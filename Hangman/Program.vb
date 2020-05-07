@@ -6,6 +6,8 @@ Module Program
 
     Sub Main()
 
+        Console.Title = "Hangman"
+
         ' used as an infinite loop to make the game replayable
         While True
 
